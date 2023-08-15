@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Listrik</title>
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+  <!-- Tambahkan manifest untuk Add to Home Screen -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="images/icons/icon-72x72.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    /* Gaya untuk header */
+    .header {
+      background-color: #007bff;
+      color: yellow;
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+    }
+    
+    /* Gaya untuk footer */
+    .footer {
+      text-align: center;
+      padding: 5px;
+      background-color: #f8f9fa;
+      border-top: 1px solid #dee2e6;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h6><i class="fas fa-bolt"></i> Kalkulator Listrik</h6>
+  </div>
+  
+  <div class="container mt-4">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th colspan="2">DETAIL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PEMAKAIAN</td>
+          <td>
+            <div class="input-group">
+              <input type="date" class="form-control">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>BATAS PF</td>
+          <td>
+            <div class="input-group">
+              <input type="number" id="batasPF" class="form-control" value="0.85" step="0.001" onchange="hitung()">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>DAYA (KVH)</td>
+          <td>
+            <div class="input-group">
+              <input type="number" id="kvh" class="form-control" value="240" step="0.001">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>K</td>
+          <td>
+            <div class="input-group">
+              <input type="number" id="k" class="form-control" value="1.5" step="0.001">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>JAM NYALA (MIN)</td>
+          <td>
+            <div class="input-group">
+              <input type="number" id="jamNyala" class="form-control" value="40" step="0.001" onchange="hitung()">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>MINIMAL BAYAR</td>
+          <td id="minBayar">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th></th>
+          <th>St Awal</th>
+          <th>St Akhir</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- LWBP -->
+        <tr>
+          <td>LWBP</td>
+          <td>
+            <div class="input-group">
+              <input type="number" id="stAwalLWBP" class="form-control" value="0" step="0.001" onchange="hitung()">
+            </div>
+          </td>
+          <td>
+            <div class="input-group">
+              <input type="number" id="stAkhirLWBP" class="form-control" value="0" step="0.001" onchange="hitung()">
+            </div>
+          </td>
+        </tr>
+        <!-- WBP -->
+        <tr>
+          <td>WBP</td>
+          <td>
+            <div class="input-group">
+              <input type="number" id="stAwalWBP" class="form-control" value="0" step="0.001" onchange="hitung()">
+            </div>
+          </td>
+          <td>
+            <div class="input-group">
+              <input type="number" id="stAkhirWBP" class="form-control" value="0" step="0.001" onchange="hitung()">
+            </div>
+          </td>
+        </tr>
+        <!-- KVARH -->
+        <tr>
+          <td>KVARH</td>
+          <td>
+            <div class="input-group">
+              <input type="number" id="stAwalKVARH" class="form-control" value="0" step="0.001" onchange="hitung()">
+            </div>
+          </td>
+          <td>
+            <input type="number" id="stAkhirKVARH" class="form-control" value="0" step="0.001" onchange="hitung()">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Selisih -->
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th colspan="2" style="text-align: center;">SELISIH</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>LWBP</td>
+          <td id="selisihLWBP" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td>WBP</td>
+          <td id="selisihWBP" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td>KVARH</td>
+          <td id="selisihKVARH" style="background-color: beige;">0</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Pemakaian -->
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th colspan="2" style="text-align: center;">PEMAKAIAN</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-size: 12px;">LWBP (0.4 X SELISIH LWBP)</td>
+          <td id="pemakaianLWBP" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td style="font-size: 12px;">WBP (0.4 X SELISIH WBP)</td>
+          <td id="pemakaianWBP" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td style="font-size: 12px;">KVARH (0.4 X SELISIH KVARH)</td>
+          <td id="pemakaianKVARH" style="background-color: beige;">0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- TOTAL -->
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th style="text-align: center;">TOTAL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>SELISIH (LWBP+WBP)</td>
+        </tr>
+        <tr style="background-color:beige;">
+          <td id="totalSelisih">0</td>
+        </tr>
+        <tr>
+          <td>PEMAKAIAN (0.4 X SELISIH)</td>
+        </tr>
+        <tr style="background-color:beige;">
+          <td id="totalPemakaian">0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Tarif -->
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th colspan="2" style="text-align: center;">TARIF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>LWBP</td>
+          <td id="tarifLWBP" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td>WBP</td>
+          <td id="tarifWBP" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td>KVARH</td>
+          <td id="tarifKVARH" style="background-color: beige;">0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Biaya -->
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th colspan="2" style="text-align: center;">Biaya</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>LWBP</td>
+          <td id="biayaLWBP" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td>WBP</td>
+          <td id="biayaWBP" style="background-color: beige;">0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Biaya KVARH -->
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th colspan="2" style="text-align: center;">Biaya KVARH</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ST AWAL</td>
+          <td id="stAwalBiayaKVARH" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td>ST AKHIR</td>
+          <td id="stAkhirBiayaKVARH" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td>PEMAKAIAN</td>
+          <td id="pemakaianBiayaKVARH" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td>Biaya</td>
+          <td id="akhirBiayaKVARH" style="background-color: beige;">0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Netto -->
+    <table class="table table-bordered" style="margin-bottom: 50px;">
+      <thead>
+        <tr>
+          <th colspan="2" style="text-align: center;">HASIL AKHIR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Netto</td>
+          <td id="netto" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td style="font-size: 12px;">Selisih minimal bayar dengan netto</td>
+          <td id="selisihMinNetto" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td style="font-size: 12px;">50% dari selisih minimal bayar dengan netto</td>
+          <td id="selisihMin50Netto" style="background-color: beige;">0</td>
+        </tr>
+        <tr>
+          <td>Brutto</td>
+          <td id="brutto" style="background-color: beige;">0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function hitung(){
+      //Data awal
+      var batasPF = $("#batasPF").val()
+      var kvh = $("#kvh").val()
+      var k = $("#k").val()
+      var jamNyala = $("#jamNyala").val()
+
+      //Data Perhitungan
+      var stAwalLWBP = $('#stAwalLWBP').val()
+      var stAkhirLWBP = $('#stAkhirLWBP').val()
+      var stAwalWBP = $('#stAwalWBP').val()
+      var stAkhirWBP = $('#stAkhirWBP').val()
+      var stAwalKVARH = $('#stAwalKVARH').val()
+      var stAkhirKVARH = $('#stAkhirKVARH').val()
+
+      //Data selisih
+      var selisihLWBP = Number(Math.abs(stAwalLWBP - stAkhirLWBP))
+      $('#selisihLWBP').text(selisihLWBP.toFixed(2))
+      var selisihWBP = Number(Math.abs(stAwalWBP - stAkhirWBP))
+      $('#selisihWBP').text(selisihWBP.toFixed(2))
+      var selisihKVARH = Number(Math.abs(stAwalKVARH - stAkhirKVARH))
+      $('#selisihKVARH').text(selisihKVARH.toFixed(2))
+
+      //Data Pemakaian
+      var pemakaianLWBP = Number(0.4*selisihLWBP)
+      $('#pemakaianLWBP').text(pemakaianLWBP.toFixed(2))
+      var pemakaianWBP = Number(0.4*selisihWBP)
+      $('#pemakaianWBP').text(pemakaianWBP.toFixed(2))
+      var pemakaianKVARH = Number(0.4*selisihKVARH)
+      $('#pemakaianKVARH').text(pemakaianKVARH.toFixed(2))
+
+      //Data Tarif
+      var tarifLWBP = 1035.78
+      $('#tarifLWBP').text(tarifLWBP.toFixed(2))
+      var tarifWBP = Number(k*tarifLWBP)
+      $('#tarifWBP').text(tarifWBP.toFixed(2))
+      var tarifKVARH = 1114.74
+      $('#tarifKVARH').text(tarifKVARH.toFixed(2))
+
+      var minBayar = Number(kvh*jamNyala*tarifLWBP)
+      $('#minBayar').text(minBayar.toFixed(2))
+
+      //Data Biaya
+      var biayaLWBP = Number(pemakaianLWBP*tarifLWBP)
+      $('#biayaLWBP').text(biayaLWBP.toFixed(2))
+      var biayaWBP = Number(pemakaianWBP*tarifWBP)
+      $('#biayaWBP').text(biayaWBP.toFixed(2))
+
+      //Data total
+      var totalSelisih = Number(selisihLWBP+selisihWBP)
+      $('#totalSelisih').text(totalSelisih.toFixed(2))
+      var totalPemakain = Number(0.4*totalSelisih)
+      $('#totalPemakaian').text(totalPemakain.toFixed(2))
+
+      //Data biaya KVARH
+      var stAwalBiayaKVARH = Number(totalPemakain * Math.tan(Math.acos(batasPF)));
+      $('#stAwalBiayaKVARH').text(stAwalBiayaKVARH.toFixed(2));
+      var stAkhirBiayaKVARH = Number(pemakaianKVARH)
+      $('#stAkhirBiayaKVARH').text(stAkhirBiayaKVARH.toFixed(2))
+      var pemakaianBiayaKVARH = Number(Math.abs(stAkhirBiayaKVARH-stAwalBiayaKVARH))
+      $('#pemakaianBiayaKVARH').text(pemakaianBiayaKVARH.toFixed(2))
+      var akhirBiayaKVARH = Number(pemakaianBiayaKVARH*tarifKVARH)
+      $('#akhirBiayaKVARH').text(akhirBiayaKVARH.toFixed(2))
+
+      //Netto
+      var netto = Number(biayaLWBP+biayaWBP+akhirBiayaKVARH)
+      $('#netto').text(netto.toFixed(2))
+      var selisihMinNetto = Number(Math.abs(netto-minBayar))
+      $('#selisihMinNetto ').text(selisihMinNetto.toFixed(2))
+      var selisihMin50Netto = Number(0.5*selisihMinNetto)
+      $('#selisihMin50Netto ').text(selisihMin50Netto.toFixed(2))
+      var brutto = Number(netto+selisihMin50Netto)
+      $('#brutto').text(brutto.toFixed(2))
+    }
+  </script>
+  
+    
+  <div class="footer">
+    <a href="https://medandigitalinnovation" rel="noopener noreferrer">Powered by MEDIO</a>
+  </div>
+  
+  <!-- Tambahkan Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(function(registration) {
+          console.log('Service Worker berhasil diregistrasi:', registration);
+        })
+        .catch(function(error) {
+          console.log('Pendaftaran Service Worker gagal:', error);
+        });
+    }
+  </script>
+</body>
+</html>
